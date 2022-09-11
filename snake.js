@@ -5,6 +5,15 @@ function init(){
     pen = canvas.getContext('2d');
     cs = 34;
     game_over = false;
+    score = 5;
+
+    //Creating a Image object for food
+    food_img = new Image();
+    food_img.src = "img/food.png";
+
+    //Creating TRophy object for score:
+    trophy_img = new Image();
+    trophy_img.src = "img/trophy.png";
 
     food = getRandomFood();
     
@@ -38,6 +47,7 @@ function init(){
             if(headX == food.x && headY == food.y){
                 console.log("Food has been eaten");
                 food = getRandomFood();
+                score++;
             }
             else{
                 this.cells.pop();
@@ -85,7 +95,7 @@ function init(){
             var last_x = Math.round(W/cs);
             var last_y = Math.round(H/cs);
 
-            if(this.cells[0].y<0 || this.cells[0].x < 0 || this.cells[0].x > last_x || this.cells[0].y > last_y)
+            if(this.cells[0].y<0 || this.cells[0].x < 0 || this.cells[0].x > last_x || this.cells[0].y > last_y - 1)
             {
                 game_over = true;
             }
@@ -127,7 +137,13 @@ function draw(){
     snake.drawSnake();
 
     pen.fillStyle = food.color;
-    pen.fillRect(food.x*cs , food.y*cs , cs,cs);
+    pen.drawImage(food_img , food.x*cs , food.y*cs , cs,cs);
+
+    
+    pen.drawImage(trophy_img , 18 ,20 , cs,cs);
+    pen.fillStyle = "blue";
+    pen.font = "20px Roboto";
+    pen.fillText(score, 50,50);
 }
 
 
