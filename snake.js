@@ -4,6 +4,9 @@ function init(){
     W = H = canvas.width = canvas.height = 600;
     pen = canvas.getContext('2d');
     cs = 34;
+    game_over = false;
+
+    food = getRandomFood();
     
     // crete snake;
     snake = {
@@ -28,11 +31,20 @@ function init(){
         updateSnake:function(){
             // console.log("updating snake");
             console.log("Updating snake according to the direction property ");
-
-
-            this.cells.pop();
+            //Check if the snake has been eaten food , increase the length of the snake and generate new food as a object:
             var headX = this.cells[0].x;
             var headY = this.cells[0].y;
+
+            if(headX == food.x && headY == food.y){
+                console.log("Food has been eaten");
+                food = getRandomFood();
+            }
+            else{
+                this.cells.pop();
+            }
+
+            
+            
             var nextX,nextY;
 
             // var X = headX + 1;
@@ -67,9 +79,21 @@ function init(){
             //     // rect.y += rect.speed;
             // }
             this.cells.unshift({x:nextX,y:nextY});
+
+            //Write a logic that prevent snake from going out
+
+            var last_x = Math.round(W/cs);
+            var last_y = Math.round(H/cs);
+
+            if(this.cells[0].y<0 || this.cells[0].x < 0 || this.cells[0].x > last_x || this.cells[0].y > last_y)
+            {
+                game_over = true;
+            }
         }
     };
     snake.createSnake();
+
+
     //Add a event Listener on the document Object:
     function keyPressed(e){
         console.log("Key Pressed",e.key);
@@ -101,14 +125,37 @@ function draw(){
     //Erase the old frame:
     pen.clearRect(0,0,W,H);
     snake.drawSnake();
+
+    pen.fillStyle = food.color;
+    pen.fillRect(food.x*cs , food.y*cs , cs,cs);
 }
+
+
 //Function Update:
 function update(){
     // console.log("In Update");
     snake.updateSnake();
 }
+//Get Random Foord:
+
+function getRandomFood(){
+    var foodX = Math.round(Math.random()*(W-cs)/cs);
+    var foodY = Math.round(Math.random()*(H-cs)/cs);
+
+    var food={
+        x:foodX,
+        y:foodY,
+        color:"red",
+    };
+    return food;
+}
 //Gameloop:
 function gameloop(){
+    if(game_over ==true){
+        clearInterval(f);
+        alert("Game Over");
+        return;
+    }
     draw();
     update();
 }
